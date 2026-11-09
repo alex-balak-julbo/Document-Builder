@@ -1,0 +1,12 @@
+@tailwind base; @tailwind components; @tailwind utilities;
+@layer components {
+  .btn { @apply rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:border-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand; }
+  .btn-p { @apply border-brand bg-brand text-white; }
+  .inp { @apply rounded-md border border-slate-300 bg-white px-2 py-1.5 text-sm; }
+}
+.sheet { width:210mm; background:#fff; font-family: Georgia, serif; font-size:11pt; position:relative;
+  background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(297mm - 2px),#e45 calc(297mm - 2px),#e45 297mm); }
+.sheet table { border-collapse:collapse; width:100% } .sheet td,.sheet th { border:1px solid #9aa8b4; padding:4px 6px }
+.sheet h1{font-size:1.8em;font-weight:600} .sheet h2{font-size:1.4em;font-weight:600} .sheet hr{border-top:1px solid #9aa8b4}
+.ph { background:#d8f0ee; color:#0a4f55; border-radius:3px; padding:0 3px }
+@media print { .noprint { display:none !important } .sheet { background-image:none; box-shadow:none } }
