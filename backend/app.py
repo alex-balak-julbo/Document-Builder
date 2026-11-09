@@ -3,12 +3,50 @@ from functools import wraps
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify, session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.engine import URL
 from bleach.css_sanitizer import CSSSanitizer
 from werkzeug.security import generate_password_hash, check_password_hash
 load_dotenv()
+
+def required_env(name):
+    value = os.environ.get(name)
+    if not value:
+        raise RuntimeError(f"Missing required environment variable: {name}")
+    return value
+
+def env_bool(name, default=False):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    if value.lower() in {"1", "true", "yes", "on"}:
+        return True
+    if value.lower() in {"0", "false", "no", "off"}:
+        return False
+    raise RuntimeError(f"{name} must be a boolean value (true or false)")
+
+try:
+    db_port = int(os.getenv("DB_PORT", "3306"))
+except ValueError as exc:
+    raise RuntimeError("DB_PORT must be an integer") from exc
+
+database_url = URL.create(
+    drivername="mysql+pymysql",
+    username=required_env("DB_USER"),
+    password=required_env("DB_PASSWORD"),
+    host=os.getenv("DB_HOST", "127.0.0.1"),
+    port=db_port,
+    database=required_env("DB_NAME"),
+    query={"charset": os.getenv("DB_CHARSET", "utf8mb4")},
+)
+
 app = Flask(__name__)
-app.config.update(SECRET_KEY=os.environ["SECRET_KEY"], SQLALCHEMY_DATABASE_URI=os.environ["DATABASE_URL"],
-                  SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax")
+app.config.update(
+    SECRET_KEY=required_env("SECRET_KEY"),
+    SQLALCHEMY_DATABASE_URI=database_url,
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=env_bool("SESSION_COOKIE_SECURE"),
+)
 db = SQLAlchemy(app)
 
 class User(db.Model):

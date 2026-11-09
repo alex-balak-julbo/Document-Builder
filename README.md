@@ -156,9 +156,15 @@ Backend settings come from environment variables, loaded from `backend/.env`.
 | Variable | Required | Example | Description |
 |---|---|---|---|
 | `SECRET_KEY` | yes | output of `python -c "import secrets; print(secrets.token_hex(32))"` | Signs the session cookie. Keep it secret; changing it logs everyone out. |
-| `DATABASE_URL` | yes | `mysql+pymysql://docbuilder:password@localhost:3306/docbuilder?charset=utf8mb4` | SQLAlchemy URL. URL-encode special characters in the password. |
+| `DB_HOST` | no | `127.0.0.1` | MySQL server host. |
+| `DB_PORT` | no | `3306` | MySQL server port. Must be an integer. |
+| `DB_NAME` | yes | `docbuilder` | Database name. |
+| `DB_USER` | yes | `docbuilder` | Database username. |
+| `DB_PASSWORD` | yes | `?` | Database password. Special characters are supported. |
+| `DB_CHARSET` | no | `utf8mb4` | MySQL connection character set. |
+| `SESSION_COOKIE_SECURE` | no | `false` | Set to `true` when serving over HTTPS. |
 
-Cookie settings in `app.py`: `SESSION_COOKIE_HTTPONLY=True`, `SESSION_COOKIE_SAMESITE="Lax"`. Add `SESSION_COOKIE_SECURE=True` when serving over HTTPS.
+The SQLAlchemy connection URL is built from the database fields above, so passwords do not need URL encoding. Cookie settings also include `SESSION_COOKIE_HTTPONLY=True` and `SESSION_COOKIE_SAMESITE="Lax"`.
 
 The dev proxy target (`http://127.0.0.1:5000`) is set in `frontend/vite.config.js`.
 
@@ -312,7 +318,7 @@ curl -b jar -H 'Content-Type: application/json' \
    cd backend && gunicorn -w 3 -b 127.0.0.1:5000 app:app
    ```
 
-   Run it under systemd or a container and set `SECRET_KEY` and `DATABASE_URL` in the service environment (do not commit `.env`).
+   Run it under systemd or a container and set `SECRET_KEY` and the `DB_*` variables in the service environment (do not commit `.env`).
 
 3. **nginx (same origin for SPA and API)**
 
@@ -343,9 +349,9 @@ curl -b jar -H 'Content-Type: application/json' \
 
 | Symptom | Likely cause and fix |
 |---|---|
-| `KeyError: 'SECRET_KEY'` on start | `.env` missing or not in `backend/`. Copy `.env.example` and fill it in. |
+| `Missing required environment variable: SECRET_KEY` on start | `.env` missing or not in `backend/`. Copy `.env.example` and fill it in. |
 | `RuntimeError: 'cryptography' package is required` | Install requirements again; MySQL 8 `caching_sha2_password` needs `cryptography`. |
-| `Can't connect to MySQL server` | Check host, port and credentials in `DATABASE_URL`; make sure MySQL is running. |
+| `Can't connect to MySQL server` | Check `DB_HOST`, `DB_PORT`, `DB_USER` and `DB_PASSWORD`; make sure MySQL is running. |
 | `Unknown database 'docbuilder'` | Create the database first (section 5.1). |
 | `Table '…' doesn't exist` | Run `flask --app app init-db`. |
 | Login screen after every refresh | Cookie not stored: use the Vite URL (`localhost:5173`), not the Flask port, and keep the SPA and API on one origin. Behind HTTPS, check `SESSION_COOKIE_SECURE`. |
