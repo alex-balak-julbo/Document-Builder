@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Document Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:wght@400;600&display=swap">
+<style>
+:root{--bg:#e3e8ec;--panel:#f7f9fa;--ink:#1b2735;--mute:#5f6e7d;--line:#c9d2d9;--acc:#0e6b73;--accfg:#fff;--sheet:#fff;--sheetink:#1b2735;--ph:#d8f0ee;--phink:#0a4f55;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#10161d;--panel:#18212b;--ink:#e6ecf1;--mute:#93a1ae;--line:#2d3b49;--acc:#4cc2cb;--accfg:#06262a;--ph:#12383c;--phink:#9fe3e8}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 "IBM Plex Sans",system-ui,sans-serif;min-height:100vh}
+header{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:10px 16px;background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+h1{font:600 17px "Source Serif 4",Georgia,serif;margin:0 12px 0 0}
+nav{display:flex;gap:4px}nav button{border:0;background:none;color:var(--mute);padding:7px 12px;border-radius:6px;cursor:pointer;font:inherit}
+nav button.on{background:var(--acc);color:var(--accfg)}
+button,select,input{font:inherit;color:var(--ink)}
+.btn{border:1px solid var(--line);background:var(--panel);padding:6px 11px;border-radius:6px;cursor:pointer}
+.btn:hover{border-color:var(--acc)}.btn.p{background:var(--acc);color:var(--accfg);border-color:var(--acc)}
+button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+input,select{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+main{padding:16px;max-width:1400px;margin:0 auto}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+.list{display:grid;gap:8px;margin-top:12px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.item b{font-weight:600}.mute{color:var(--mute);font-size:12.5px}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 8px;color:var(--mute)}
+.split{display:grid;grid-template-columns:260px 1fr;gap:16px;align-items:start}
+@media(max-width:800px){.split{grid-template-columns:1fr}}
+.side{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;position:sticky;top:64px;max-height:calc(100vh - 80px);overflow:auto}
+.pal{padding:8px 10px;margin-top:6px;border:1px dashed var(--line);border-radius:6px;cursor:grab;background:var(--bg)}
+.pal:hover{border-color:var(--acc)}
+.desk{overflow-x:auto;padding-bottom:20px}
+.sheet{width:210mm;margin:0 auto;background:var(--sheet);color:var(--sheetink);box-shadow:0 2px 14px rgba(0,0,0,.22);position:relative;font-family:"Source Serif 4",Georgia,serif;font-size:11pt;
+ background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(297mm - 2px),#e45 calc(297mm - 2px),#e45 297mm);background-size:100% 297mm}
+.sheet.noguides{background-image:none}
+.zone{padding:8mm 14mm;min-height:18mm;border-bottom:1px dashed #b9c4cc}.zone.f{position:absolute;bottom:0;left:0;right:0;border:0;border-top:1px dashed #b9c4cc;background:var(--sheet)}
+.zone .empty{color:#8a98a5;font:12px "IBM Plex Sans",sans-serif}
+.body{padding:8mm 14mm 30mm}
+.blk{position:relative;border:1px solid transparent;border-radius:3px;padding:2px 4px;margin:2px 0}
+.blk:hover,.blk:focus-within{border-color:var(--acc)}
+.tools{position:absolute;right:2px;top:-14px;display:none;gap:2px;background:var(--acc);border-radius:4px;padding:1px 3px;z-index:2}
+.blk:hover .tools{display:flex}.tools button{border:0;background:none;color:var(--accfg);cursor:pointer;padding:0 4px;font-size:13px}
+.blk.over{border-top:3px solid var(--acc)}
+.ph{background:var(--ph);color:var(--phink);border-radius:3px;padding:0 3px;font-family:"IBM Plex Sans",sans-serif;font-size:.9em}
+.sheet table{border-collapse:collapse;width:100%}.sheet td,.sheet th{border:1px solid #9aa8b4;padding:4px 6px}
+.sheet hr{border:0;border-top:1px solid #9aa8b4}
+.sig{height:22mm;border:1px dashed #9aa8b4;display:flex;align-items:flex-end;padding:4px;font:12px "IBM Plex Sans",sans-serif;color:#7a8896}
+.ed{background:var(--sheet);color:var(--sheetink);border:1px solid var(--line);border-radius:8px;min-height:240px;padding:16px;font-family:"Source Serif 4",Georgia,serif}
+.drop{border:2px dashed var(--line);border-radius:8px;padding:20px;text-align:center;color:var(--mute);margin:8px 0}
+@media print{header,.side,.noprint{display:none!important}body{background:#fff}main{padding:0}.split{display:block}.sheet{box-shadow:none;background-image:none}.zone{border:0}.ph{background:none;color:inherit;font-family:inherit}}
+.toast{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:6px;z-index:9}
+</style></head><body>
+<header><h1>Document Builder</h1>
+<nav id="nav"><button data-v="tpl">Template library</button><button data-v="blk">Block library</button><button data-v="des">Template designer</button></nav></header>
+<main id="app"></main>
+<script>
+const $=(s,e=document)=>e.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+function clean(h){const d=new DOMParser().parseFromString('<body>'+h,'text/html');
+ d.querySelectorAll('script,iframe,object,embed,link,meta,style,form').forEach(n=>n.remove());
+ d.body.querySelectorAll('*').forEach(n=>[...n.attributes].forEach(a=>{const v=a.value.trim().toLowerCase();
+  if(a.name.startsWith('on')||v.startsWith('javascript:')||(a.name==='src'&&!v.startsWith('data:image/')))n.removeAttribute(a.name)}));
+ return d.body.innerHTML}
+const phWrap=h=>h.replace(/\{\{([A-Z0-9_]+)\}\}/g,(m,x)=>'<span class="ph">{{'+x+'}}</span>');
+const COMP={
+ Title:'<h1>Document title</h1>',Subtitle:'<h2>Section title</h2>',Text:'<p>Write your text here. Insert placeholders such as {{CUSTOMER_NAME}}.</p>',
+ Table:'<table><tr><th>Item</th><th>Quantity</th><th>Amount</th></tr><tr><td>{{ITEM}}</td><td>{{QTY}}</td><td>{{AMOUNT}}</td></tr></table>',
+ Logo:'<div style="width:40mm;height:14mm;border:1px dashed #9aa8b4;display:flex;align-items:center;justify-content:center;font:12px sans-serif">{{COMPANY_LOGO}}</div>',
+ Divider:'<hr>',Signature:'<div class="sig">Signature</div>',Placeholder:'<span>{{CURRENT_DATE}}</span>'};
+const seed=()=>({blocks:[
+ {id:'b1',name:'Corporate header',category:'Header',tags:['company'],html:'<table style="border:0"><tr><td style="border:0;width:45mm">'+COMP.Logo+'</td><td style="border:0;text-align:right"><b>Company name</b><br>12 rue de la Paix, Paris<br>{{CURRENT_DATE}}</td></tr></table>',version:2,archived:false,versions:[1]},
+ {id:'b2',name:'Page footer',category:'Footer',tags:['legal'],html:'<p style="text-align:center;font-size:9pt;color:#5f6e7d">Confidential – {{COMPANY_NAME}}</p>',version:1,archived:false,versions:[]},
+ {id:'b3',name:'Report title',category:'Title',tags:['title'],html:'<h1>{{REPORT_TITLE}}</h1><p>Prepared for {{CUSTOMER_NAME}}</p>',version:1,archived:false,versions:[]},
+ {id:'b4',name:'Findings table',category:'Table',tags:['table'],html:'<h2>Findings</h2>'+COMP.Table,version:1,archived:false,versions:[]},
+ {id:'b5',name:'Signature area',category:'Signature',tags:['sign'],html:'<p>Signed by {{SIGNATORY}}</p>'+COMP.Signature,version:1,archived:false,versions:[]}],
+ templates:[]});
+let S;try{S=JSON.parse(localStorage.getItem('docbuilder'))}catch(e){}
+if(!S||!S.blocks)S=seed();
+const save=()=>{try{localStorage.setItem('docbuilder',JSON.stringify(S))}catch(e){}};
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),1800)}
+let view='tpl',cur=null,editBlk=null,q='',showArch=false;
+const blk=id=>S.blocks.find(b=>b.id===id);
+function nav(v){view=v;render()}
+$('#nav').onclick=e=>{if(e.target.dataset.v)nav(e.target.dataset.v)};
+function render(){document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===view));
+ ({tpl:rTpl,blk:rBlk,des:rDes})[view]()}
+const match=o=>!q||[o.name,o.category,...(o.tags||[])].join(' ').toLowerCase().includes(q.toLowerCase());
+function toolbar(ph){return `<div class="row"><input id="q" placeholder="Search by name, category or tag" value="${q}" style="min-width:240px"><label class="mute"><input type="checkbox" id="arch" ${showArch?'checked':''}> Show archived</label><span class="sp"></span>${ph}</div>`}
+function bindSearch(){$('#q').oninput=e=>{q=e.target.value;const p=e.target.selectionStart;render();const n=$('#q');n.focus();n.setSelectionRange(p,p)};$('#arch').onchange=e=>{showArch=e.target.checked;render()}}
+/* ---------- Template library ---------- */
+function rTpl(){const l=S.templates.filter(t=>match(t)&&(showArch||!t.archived));
+ $('#app').innerHTML=toolbar('<button class="btn p" id="new">New template</button>')+'<div class="list">'+(l.map(t=>`<div class="item" data-id="${t.id}"><b>${t.name}</b><span class="tag">${t.category}</span><span class="tag">v${t.version}</span>${t.archived?'<span class="tag">archived</span>':''}<span class="mute">${t.items.length} blocks</span><span class="sp"></span>
+ <button class="btn" data-a="edit">Edit</button><button class="btn" data-a="prev">Preview</button><button class="btn" data-a="dup">Duplicate</button><button class="btn" data-a="arch">${t.archived?'Restore':'Archive'}</button>
+ <select data-a="ver" title="Versions"><option value="">Versions</option>${[...t.versions.map(v=>v.version),t.version].map(v=>`<option>${v}</option>`).join('')}</select></div>`).join('')||'<div class="drop">No templates yet. Create your first template to start designing on an A4 page.</div>')+'</div>';
+ bindSearch();$('#new').onclick=()=>{cur={id:'t'+uid(),name:'Untitled template',description:'',category:'General',version:1,header:'',footer:'',firstHeader:'',items:[],versions:[],archived:false,tags:[]};S.templates.push(cur);save();nav('des')};
+ $('#app').onclick=e=>{const it=e.target.closest('.item');if(!it||!e.target.dataset.a)return;const t=S.templates.find(x=>x.id===it.dataset.id),a=e.target.dataset.a;
+  if(a==='edit'){cur=t;nav('des')}if(a==='prev'){cur=t;nav('des');setTimeout(()=>preview(),50)}
+  if(a==='dup'){S.templates.push({...JSON.parse(JSON.stringify(t)),id:'t'+uid(),name:t.name+' (copy)',version:1,versions:[]});save();render()}
+  if(a==='arch'){t.archived=!t.archived;save();render()}};
+ $('#app').onchange=e=>{if(e.target.dataset.a!=='ver'||!e.target.value)return;const t=S.templates.find(x=>x.id===e.target.closest('.item').dataset.id);
+  const v=+e.target.value,s=t.versions.find(x=>x.version===v);if(s){const old=JSON.parse(JSON.stringify(t));cur=Object.assign(t,{...JSON.parse(JSON.stringify(s.data)),version:t.version,versions:t.versions});toast('Loaded v'+v+' as a draft. Save to create a new version.')}else cur=t;nav('des')}}
+/* ---------- Block library + designer ---------- */
+function rBlk(){const l=S.blocks.filter(b=>match(b)&&(showArch||!b.archived));
+ $('#app').innerHTML=toolbar('<button class="btn p" id="nb">New block</button>')+`<div class="split" style="margin-top:12px"><div class="list" style="margin:0">${l.map(b=>`<div class="item" data-id="${b.id}"><div><b>${b.name}</b><div class="mute">${b.category} · v${b.version}${b.archived?' · archived':''}</div></div><span class="sp"></span><button class="btn" data-a="e">Edit</button><button class="btn" data-a="d">Duplicate</button><button class="btn" data-a="x">${b.archived?'Restore':'Archive'}</button></div>`).join('')}</div><div id="bd"></div></div>`;
+ bindSearch();$('#nb').onclick=()=>{editBlk={id:'b'+uid(),name:'New block',category:'General',tags:[],html:'<p>Write your text here.</p>',version:0,archived:false,versions:[]};bd()};
+ $('.list').onclick=e=>{const it=e.target.closest('.item');if(!it||!e.target.dataset.a)return;const b=blk(it.dataset.id),a=e.target.dataset.a;
+  if(a==='e'){editBlk=JSON.parse(JSON.stringify(b));bd()}
+  if(a==='d'){S.blocks.push({...JSON.parse(JSON.stringify(b)),id:'b'+uid(),name:b.name+' (copy)',version:1,versions:[]});save();render()}
+  if(a==='x'){b.archived=!b.archived;save();render()}};
+ if(editBlk)bd()}
+function bd(){const b=editBlk;$('#bd').innerHTML=`<div class="side" style="position:static;max-height:none"><div class="row"><input id="bn" value="${b.name}" aria-label="Block name"><input id="bc" value="${b.category}" aria-label="Category" style="width:120px"><input id="bt" value="${(b.tags||[]).join(', ')}" placeholder="tags" style="width:130px"></div>
+ <div class="row" style="margin:8px 0">${Object.keys(COMP).map(k=>`<button class="btn" data-c="${k}">${k}</button>`).join('')}</div>
+ <div class="ed" id="ed" contenteditable="true">${phWrap(b.html)}</div>
+ <div class="row" style="margin-top:8px"><span class="mute">${b.version?'Saving creates v'+(b.version+1):'New block'}</span><span class="sp"></span><button class="btn" id="bx">Close</button><button class="btn p" id="bs">Save block</button></div></div>`;
+ $('#bd').onclick=e=>{const c=e.target.dataset.c;if(c){const ed=$('#ed');ed.focus();ed.insertAdjacentHTML('beforeend',phWrap(COMP[c]))}};
+ $('#bx').onclick=()=>{editBlk=null;$('#bd').innerHTML=''};
+ $('#bs').onclick=()=>{const h=clean($('#ed').innerHTML.replace(/<span class="ph">([^<]*)<\/span>/g,'$1')),ex=blk(b.id);
+  const n={...b,name:$('#bn').value||'Untitled',category:$('#bc').value||'General',tags:$('#bt').value.split(',').map(s=>s.trim()).filter(Boolean),html:h};
+  if(ex){n.versions=[...ex.versions,ex.version];n.version=ex.version+1;Object.assign(ex,n)}else{n.version=1;S.blocks.push(n)}
+  editBlk=null;save();toast('Block saved');render()}}
+/* ---------- Template designer ---------- */
+function rDes(){if(!cur){$('#app').innerHTML='<div class="drop">Open or create a template from the Template library.</div>';return}
+ const t=cur,opts=sel=>'<option value="">None</option>'+S.blocks.filter(b=>!b.archived).map(b=>`<option value="${b.id}" ${sel===b.id?'selected':''}>${b.name}</option>`).join('');
+ $('#app').innerHTML=`<div class="row noprint" style="margin-bottom:12px"><input id="tn" value="${t.name}" aria-label="Template name" style="font-weight:600;min-width:220px"><input id="tc" value="${t.category}" aria-label="Category" style="width:120px"><span class="tag">v${t.version}</span><span class="sp"></span>
+ <label class="mute">Header <select id="hs">${opts(t.header)}</select></label><label class="mute">First page header <select id="fh">${opts(t.firstHeader)}</select></label><label class="mute">Footer <select id="fs">${opts(t.footer)}</select></label>
+ <button class="btn" id="pv">Print preview</button><button class="btn p" id="sv">Save version</button></div>
+ <div class="split"><div class="side noprint"><b>Blocks</b><div class="mute">Drag onto the page, or click to add.</div><div id="pal">${S.blocks.filter(b=>!b.archived).map(b=>`<div class="pal" draggable="true" data-id="${b.id}">${b.name}<div class="mute">${b.category}</div></div>`).join('')}</div></div>
+ <div class="desk"><div class="sheet" id="sheet"><div class="zone" id="zh"></div><div class="body" id="bodyz"></div><div class="zone f" id="zf"></div></div></div></div>`;
+ $('#tn').oninput=e=>t.name=e.target.value;$('#tc').oninput=e=>t.category=e.target.value;
+ $('#hs').onchange=e=>{t.header=e.target.value;paint()};$('#fh').onchange=e=>{t.firstHeader=e.target.value;paint()};$('#fs').onchange=e=>{t.footer=e.target.value;paint()};
+ $('#pv').onclick=preview;
+ $('#sv').onclick=()=>{sync();const snap=JSON.parse(JSON.stringify({header:t.header,footer:t.footer,firstHeader:t.firstHeader,items:t.items,name:t.name,category:t.category}));
+  if(t._saved){t.versions.push({version:t.version,data:t._saved});t.version++}t._saved=snap;
+  if(!t.versions.length&&!t._firstDone){t._firstDone=true}save();toast('Saved as v'+t.version);rDes()};
+ $('#pal').onclick=e=>{const p=e.target.closest('.pal');if(p){add(p.dataset.id)}};
+ $('#pal').ondragstart=e=>{const p=e.target.closest('.pal');if(p)e.dataTransfer.setData('text/plain','new:'+p.dataset.id)};
+ const bz=$('#bodyz');bz.ondragover=e=>{e.preventDefault();$('.over')&&$('.over').classList.remove('over');const b=e.target.closest('.blk');if(b)b.classList.add('over')};
+ bz.ondrop=e=>{e.preventDefault();const d=e.dataTransfer.getData('text/plain'),b=e.target.closest('.blk'),at=b?t.items.findIndex(i=>i.uid===b.dataset.u):t.items.length;sync();
+  if(d.startsWith('new:'))add(d.slice(4),at);else if(d.startsWith('mv:')){const i=t.items.findIndex(x=>x.uid===d.slice(3));if(i<0)return;const [it]=t.items.splice(i,1);t.items.splice(at>i?at-1:at,0,it);paint()}};
+ bz.onclick=e=>{const a=e.target.dataset.a;if(!a)return;sync();const u=e.target.closest('.blk').dataset.u,i=t.items.findIndex(x=>x.uid===u);
+  if(a==='del')t.items.splice(i,1);if(a==='cl')t.items.splice(i+1,0,{...t.items[i],uid:uid()});
+  if(a==='up'&&i>0)[t.items[i-1],t.items[i]]=[t.items[i],t.items[i-1]];if(a==='dn'&&i<t.items.length-1)[t.items[i+1],t.items[i]]=[t.items[i],t.items[i+1]];
+  if(a==='wd'){const w=prompt('Width (%)',t.items[i].w||100);if(w)t.items[i].w=Math.min(100,Math.max(10,+w||100))}paint()};
+ paint()}
+function add(id,at){sync();const b=blk(id);if(!b)return;const it={uid:uid(),blockId:id,html:b.html,w:100};cur.items.splice(at==null?cur.items.length:at,0,it);paint()}
+function sync(){document.querySelectorAll('.blk .c').forEach(c=>{const it=cur.items.find(i=>i.uid===c.closest('.blk').dataset.u);if(it)it.html=clean(c.innerHTML.replace(/<span class="ph">([^<]*)<\/span>/g,'$1'))})}
+function paint(){const t=cur,z=(id)=>{const b=blk(id);return b?phWrap(b.html):'<span class="empty">Not set</span>'};
+ $('#zh').innerHTML=(t.firstHeader?'<div class="mute noprint" style="font:11px sans-serif">First page header</div>'+z(t.firstHeader)+'<hr class="noprint" style="margin:6px 0"><div class="mute noprint" style="font:11px sans-serif">Header on other pages</div>':'')+(t.header?z(t.header):'<span class="empty">No header selected</span>');
+ $('#zf').innerHTML=t.footer?z(t.footer):'<span class="empty">No footer selected</span>';
+ $('#bodyz').innerHTML=t.items.map(i=>`<div class="blk" data-u="${i.uid}" draggable="true" style="width:${i.w||100}%"><div class="tools noprint"><button data-a="up" title="Move up">↑</button><button data-a="dn" title="Move down">↓</button><button data-a="wd" title="Resize">↔</button><button data-a="cl" title="Clone">⧉</button><button data-a="del" title="Remove">✕</button></div><div class="c" contenteditable="true">${phWrap(i.html)}</div></div>`).join('')||'<div class="drop noprint">Drag a block here to start the document.</div>';
+ $('#bodyz').ondragstart=e=>{const b=e.target.closest('.blk');if(b&&!e.target.closest('.c *,.c'))e.dataTransfer.setData('text/plain','mv:'+b.dataset.u)};
+ document.querySelectorAll('.blk').forEach(b=>b.addEventListener('dragstart',e=>{if(e.target===b)e.dataTransfer.setData('text/plain','mv:'+b.dataset.u)}));
+ const sh=$('#sheet'),pg=Math.max(1,Math.ceil(($('#zh').offsetHeight+$('#bodyz').offsetHeight+$('#zf').offsetHeight)/(297*3.7795)));
+ sh.style.minHeight=pg*297+'mm';sh.style.backgroundSize='100% 297mm'}
+function preview(){sync();const t=cur,h=id=>{const b=blk(id);return b?b.html:''};
+ const w=window.open('','_blank');if(!w){toast('Allow pop-ups to open the print preview');return}
+ const c=t.items.map(i=>`<div style="width:${i.w||100}%">${i.html}</div>`).join('');
+ w.document.write(clean('<div>'+c+'</div>').length?`<!DOCTYPE html><title>${t.name}</title><style>@page{size:A4;margin:0}body{margin:0;font:11pt Georgia,serif;color:#1b2735}.p{width:210mm;min-height:297mm;padding:8mm 14mm;box-sizing:border-box;position:relative}table{border-collapse:collapse;width:100%}td,th{border:1px solid #9aa8b4;padding:4px 6px}hr{border:0;border-top:1px solid #9aa8b4}.sig{height:22mm;border:1px dashed #9aa8b4}.f{position:absolute;bottom:8mm;left:14mm;right:14mm}</style><div class="p">${clean(h(t.firstHeader||t.header))}${clean(c)}<div class="f">${clean(h(t.footer))}</div></div><script>setTimeout(()=>print(),300)<\/script>`:'');w.document.close()}
+render();
+</script></body></html>
